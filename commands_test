@@ -1,0 +1,17 @@
+./Beijing-Kaoya run-swarm
+
+./Beijing-Kaoya upload --file bee.jpg --address 8550660798684b0caa8f3ed50d84d73f8c9e3380af2c72df26ae9e53703c4d3d
+
+./Beijing-Kaoya gen-patch -old-file bee.jpg -new-file bee2.jpg -version-number 2
+
+./Beijing-Kaoya upload-patch -old-file-index f4bac0cdd76f6c5c1934404f5a9257442fb0f76687b3c5b30c5b9ce4ae2af2a6 -patch-file patch2 -address 8550660798684b0caa8f3ed50d84d73f8c9e3380af2c72df26ae9e53703c4d3d
+
+./Beijing-Kaoya download -reference 4f437d304a0db8bf6edf46c2c831bd20644f941e7e66622d35768431fa869a6b -version-number 2
+
+
+reference: 798f99f7dea6c0cbda0cf3f776f9fb3713798c221af9c5be8a3f2f9319fa7419
+
+address: 8550660798684b0caa8f3ed50d84d73f8c9e3380af2c72df26ae9e53703c4d3d
+
+curl --data-binary @bee.jpg -H "Swarm-Postage-Batch-Id: 27b6699d5af3f1e0d83879413e1f95a8faed14ebcc3e4fb2d7a7044cec6d6559" "http://localhost:1633/bzz?name=bee.jpg"
+
