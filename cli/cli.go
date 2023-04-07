@@ -11,13 +11,11 @@ type CLI struct{}
 
 func (cli *CLI) printUsage() {
 	fmt.Println("Usage:")
-	/*fmt.Println("  bspatch -loc LOCATION - Run bsdiff for files in LOCATION")
-	fmt.Println("  commit -loc LOCATION - Commit changes in LOCATION")
-	fmt.Println("  diff -loc LOCATION - Show changes in LOCATION")
-	fmt.Println("  gw Execute dyaic in gitwalker generated repos")
-	fmt.Println("  patch -loc LOCATION - Generate patch file for files in LOCATION")
-	fmt.Println("  print -loc LOCATION - Show files in LOCATION")
-	fmt.Println("  watch -loc LOCATION - Start watching LOCATION")*/
+	fmt.Println("  run-swarm - start a swarm node and fund some balance for this node")
+	fmt.Println("  upload -file filepath -address addr - upload a non-multi-version file, the address is the batch ID of the previous fund tx")
+	fmt.Println("  gen-patch -old-file filepath -new-file filepath -version-number num - generate a patch file for a mulit-version file")
+	fmt.Println("  upload-patch -patch-file filepath -old-file-index id -address addr -upload a multi-version file")
+	fmt.Println("  download -reference - download a file")
 }
 
 func (cli *CLI) validateArgs() {
@@ -54,7 +52,7 @@ func (cli *CLI) Run() {
 	uploadpatchAddress := uploadPatchCmd.String("address", "", "the payment address for upload a file")
 
 	targetReference := downloadCmd.String("reference", "", "the reference of the file to be downloaded")
-	targetNumber := downloadCmd.Int("version-number", 1, "the number of the file vesion")
+	//targetNumber := downloadCmd.Int("version-number", 1, "the number of the file vesion")
 
 	/*bscommtLocation := bscommtCmd.String("loc", "", "location to be committed")
 	bspatchLocation := bspatchCmd.String("loc", "", "location of files we calc bspatch for")
@@ -133,7 +131,7 @@ func (cli *CLI) Run() {
 		}*/
 	}
 	if uploadCmd.Parsed() {
-		fmt.Println("parsed")
+		//fmt.Println("parsed")
 		cli.Upload(*uploadFile, *uploadAddress)
 	}
 	if runSwarmCmd.Parsed() {
@@ -146,7 +144,7 @@ func (cli *CLI) Run() {
 		cli.Upload_Patch(*patchFile, *oldIndex, *uploadpatchAddress)
 	}
 	if downloadCmd.Parsed() {
-		cli.Download(*targetReference, *targetNumber)
+		cli.Download(*targetReference)
 	}
 
 	/*if bscommtCmd.Parsed() {

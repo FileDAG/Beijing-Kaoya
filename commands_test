@@ -1,17 +1,18 @@
 ./Beijing-Kaoya run-swarm
 
-./Beijing-Kaoya upload --file bee.jpg --address 8550660798684b0caa8f3ed50d84d73f8c9e3380af2c72df26ae9e53703c4d3d
+./Beijing-Kaoya upload --file bee1.jpg --address 663e823838d5c0d7570f650ae686a907946f1e55c1edb67e7546a34199963e51
 
-./Beijing-Kaoya gen-patch -old-file bee.jpg -new-file bee2.jpg -version-number 2
+./Beijing-Kaoya gen-patch -old-file bee1.jpg -new-file bee2.jpg -version-number 2
 
-./Beijing-Kaoya upload-patch -old-file-index f4bac0cdd76f6c5c1934404f5a9257442fb0f76687b3c5b30c5b9ce4ae2af2a6 -patch-file patch2 -address 8550660798684b0caa8f3ed50d84d73f8c9e3380af2c72df26ae9e53703c4d3d
+./Beijing-Kaoya upload-patch -old-file-index 006d03814a0e707246dd7b656936a24fe105355166d5adbf3e28980c52a27fb8 -patch-file patch2 -address 663e823838d5c0d7570f650ae686a907946f1e55c1edb67e7546a34199963e51
 
-./Beijing-Kaoya download -reference 4f437d304a0db8bf6edf46c2c831bd20644f941e7e66622d35768431fa869a6b -version-number 2
+./Beijing-Kaoya download -reference df98ccd9249a3f544368babde7ad464b3a8f5a99c47da5ec21b86899c866e610   #restore bee2.jpg
+
+./Beijing-Kaoya download -reference 006d03814a0e707246dd7b656936a24fe105355166d5adbf3e28980c52a27fb8   #restore bee1.jpg
 
 
-reference: 798f99f7dea6c0cbda0cf3f776f9fb3713798c221af9c5be8a3f2f9319fa7419
+reference: df98ccd9249a3f544368babde7ad464b3a8f5a99c47da5ec21b86899c866e610
 
-address: 8550660798684b0caa8f3ed50d84d73f8c9e3380af2c72df26ae9e53703c4d3d
+address: 663e823838d5c0d7570f650ae686a907946f1e55c1edb67e7546a34199963e51
 
-curl --data-binary @bee.jpg -H "Swarm-Postage-Batch-Id: 27b6699d5af3f1e0d83879413e1f95a8faed14ebcc3e4fb2d7a7044cec6d6559" "http://localhost:1633/bzz?name=bee.jpg"
 
