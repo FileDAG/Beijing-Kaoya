@@ -27,14 +27,6 @@ func (cli *CLI) validateArgs() {
 
 func (cli *CLI) Run() {
 	cli.validateArgs()
-	/*bscommtCmd := flag.NewFlagSet("bscommit", flag.ExitOnError)
-	bspatchCmd := flag.NewFlagSet("bspatch", flag.ExitOnError)
-	commitCmd := flag.NewFlagSet("commit", flag.ExitOnError)
-	diffCmd := flag.NewFlagSet("diff", flag.ExitOnError)
-	gwCmd := flag.NewFlagSet("gw", flag.ExitOnError)
-	patchCmd := flag.NewFlagSet("patch", flag.ExitOnError)
-	printCmd := flag.NewFlagSet("print", flag.ExitOnError)
-	watchCmd := flag.NewFlagSet("watch", flag.ExitOnError)*/
 	runSwarmCmd := flag.NewFlagSet("run-swarm", flag.ExitOnError)
 	uploadCmd := flag.NewFlagSet("upload", flag.PanicOnError)
 	genPatchCmd := flag.NewFlagSet("gen-patch", flag.ExitOnError)
@@ -52,15 +44,6 @@ func (cli *CLI) Run() {
 	uploadpatchAddress := uploadPatchCmd.String("address", "", "the payment address for upload a file")
 
 	targetReference := downloadCmd.String("reference", "", "the reference of the file to be downloaded")
-	//targetNumber := downloadCmd.Int("version-number", 1, "the number of the file vesion")
-
-	/*bscommtLocation := bscommtCmd.String("loc", "", "location to be committed")
-	bspatchLocation := bspatchCmd.String("loc", "", "location of files we calc bspatch for")
-	commitLocation := commitCmd.String("loc", "", "location to be committed")
-	diffLocation := diffCmd.String("loc", "", "location where changes should be showed")
-	patchLocation := patchCmd.String("loc", "", "location of files we calc patch for")
-	printLocation := printCmd.String("loc", "", "location to be showed")
-	watchLocation := watchCmd.String("loc", "", "location to be watched")*/
 
 	switch os.Args[1] {
 	case "upload":
@@ -88,50 +71,8 @@ func (cli *CLI) Run() {
 		if err != nil {
 			log.Panic(err)
 		}
-		/*case "bscommit":
-			err := bscommtCmd.Parse(os.Args[2:])
-			if err != nil {
-				log.Panic(err)
-			}
-		case "bspatch":
-			err := bspatchCmd.Parse(os.Args[2:])
-			if err != nil {
-				log.Panic(err)
-			}
-		case "commit":
-			err := commitCmd.Parse(os.Args[2:])
-			if err != nil {
-				log.Panic(err)
-			}
-		case "diff":
-			err := diffCmd.Parse(os.Args[2:])
-			if err != nil {
-				log.Panic(err)
-			}
-		case "gw":
-			err := gwCmd.Parse(os.Args[2:])
-			if err != nil {
-				log.Panic(err)
-			}
-		case "patch":
-			err := patchCmd.Parse(os.Args[2:])
-			if err != nil {
-				log.Panic(err)
-			}
-		case "print":
-			err := printCmd.Parse(os.Args[2:])
-			if err != nil {
-				log.Panic(err)
-			}
-		case "watch":
-			err := watchCmd.Parse(os.Args[2:])
-			if err != nil {
-				log.Panic(err)
-			}
-		}*/
 	}
 	if uploadCmd.Parsed() {
-		//fmt.Println("parsed")
 		cli.Upload(*uploadFile, *uploadAddress)
 	}
 	if runSwarmCmd.Parsed() {
@@ -147,35 +88,4 @@ func (cli *CLI) Run() {
 		cli.Download(*targetReference)
 	}
 
-	/*if bscommtCmd.Parsed() {
-		cli.commit(*bscommtLocation, true)
-	}
-
-	if bspatchCmd.Parsed() {
-		cli.patch(*bspatchLocation, true)
-	}
-
-	if commitCmd.Parsed() {
-		cli.commit(*commitLocation, false)
-	}
-
-	if diffCmd.Parsed() {
-		cli.printDiff(*diffLocation)
-	}
-
-	if gwCmd.Parsed() {
-		cli.gitwalker()
-	}
-
-	if patchCmd.Parsed() {
-		cli.patch(*patchLocation, false)
-	}
-
-	if printCmd.Parsed() {
-		cli.printFolder(*printLocation)
-	}
-
-	if watchCmd.Parsed() {
-		cli.watch(*watchLocation)
-	}*/
 }
