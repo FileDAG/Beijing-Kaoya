@@ -1,19 +1,23 @@
 package cli
 
 import (
-	"Beijing-Kaoya/swarm"
-
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"kaoya/patch"
+	"kaoya/swarm"
+	"kaoya/utils"
+	"math/rand"
 	"os"
 	"os/exec"
 	"strconv"
 )
 
+const BZZURL = "http://localhost:1633/bzz/"
+
 type uploadmsg struct {
-	Perv_ref string `json:"perv_reference"`
-	Curr_ref string `json:"curr_reference"`
+	PrevRef string `json:"perv_reference"`
+	CurRef  string `json:"curr_reference"`
 }
 
 func (cli *CLI) Run_Swarm() {
@@ -35,7 +39,7 @@ func (cli *CLI) Upload(file, address string) {
 
 	t := []byte(out)
 	t = t[14 : len(t)-4]
-	msg := uploadmsg{Perv_ref: string(t), Curr_ref: string(t)}
+	msg := uploadmsg{PrevRef: string(t), CurRef: string(t)}
 	f, _ := os.Create("msg" + ".json")
 	encoder := json.NewEncoder(f)
 	_ = encoder.Encode(msg)
@@ -62,7 +66,7 @@ func (cli *CLI) Upload_Patch(patchName, old_index string, address string) {
 
 	t := []byte(out)
 	t = t[14 : len(t)-4]
-	msg := uploadmsg{Perv_ref: old_index, Curr_ref: string(t)}
+	msg := uploadmsg{PrevRef: old_index, CurRef: string(t)}
 	f, _ := os.Create("msg" + ".json")
 	encoder := json.NewEncoder(f)
 	_ = encoder.Encode(msg)
@@ -77,54 +81,68 @@ func (cli *CLI) Upload_Patch(patchName, old_index string, address string) {
 	os.Remove("msg" + ".json")
 }
 
-func (cli *CLI) Gen_Patch(old_file, new_file string, version_num int) {
-	patchName := "patch" + strconv.Itoa(version_num)
-	cmd := exec.Command("bsdiff", old_file, new_file, patchName)
-	_ = cmd.Run()
-
-	out := "the patch file patch" + strconv.Itoa(version_num) + " has been generated!"
-	fmt.Println(out)
+func (cli *CLI) Gen_Patch(old_file, new_file string) {
+	patch.Patch(old_file, new_file)
 }
 
-func (cli *CLI) Download(ref string) {
+func (cli *CLI) Write(oldIndex, newFile, addr string) {
+	oldName := strconv.Itoa(rand.Int())
+	cli.Download(oldIndex, oldName)
+	patchName := patch.Patch(oldName, newFile)
+	os.Remove(oldName)
+	cli.Upload_Patch(patchName, oldIndex, addr)
+	os.Remove(patchName)
+}
+
+func (cli *CLI) Download(ref, filename string) {
 	//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + ref + "/")
 	cmd := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+ref+"/")
 	cmd.Run()
 
-	version := 1
+	var increments []string
 
 	for {
-		file := "msg" + ".json"
-		f, _ := os.Open(file)
+		f, _ := os.Open("msg.json")
 		data, _ := ioutil.ReadAll(f)
 		f.Close()
 		var msg uploadmsg
 		_ = json.Unmarshal(data, &msg)
-		os.Remove("msg" + ".json")
-		if msg.Curr_ref == msg.Perv_ref {
-			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.Curr_ref + "/")
-			cmd2 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.Curr_ref+"/")
-			cmd2.Run()
+		os.Remove("msg.json")
+		if msg.CurRef == msg.PrevRef {
+			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.CurRef + "/")
+			increment, _ := utils.DownloadFromUrl(BZZURL + msg.CurRef + "/")
+			increments = append(increments, increment)
 			break
 		} else {
-			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.Curr_ref + "/")
-			cmd2 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.Curr_ref+"/")
-			cmd2.Run()
-			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.Perv_ref + "/")
-			cmd3 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.Perv_ref+"/")
+			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.CurRef + "/")
+			increment, _ := utils.DownloadFromUrl(BZZURL + msg.CurRef + "/")
+			increments = append(increments, increment)
+			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.PrevRef + "/")
+			cmd3 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.PrevRef+"/")
 			cmd3.Run()
-			version = version + 1
 		}
 	}
-	if version > 1 {
-		for i := 2; i <= version; i++ {
-			cmd4 := exec.Command("bspatch", "bee"+strconv.Itoa(i-1)+".jpg", "bee"+strconv.Itoa(i)+".jpg", "patch"+strconv.Itoa(i))
-			_ = cmd4.Run()
-			os.Remove("bee" + strconv.Itoa(i-1) + ".jpg")
-			os.Remove("patch" + strconv.Itoa(i))
-		}
+
+	n := len(increments)
+	cmd = exec.Command("mv", increments[n-1], filename)
+	cmd.Run()
+
+	for i := n - 2; i >= 0; i-- {
+		cmd = exec.Command("bspatch", filename, filename, increments[i])
+		fmt.Println(increments[i])
+		cmd.Run()
+		os.Remove(increments[i])
 	}
-	out := "the file bee" + strconv.Itoa(version) + ".jpg has been restored!"
-	fmt.Println(out)
+
+	//if version > 1 {
+	//	for i := 2; i <= version; i++ {
+	//		cmd4 := exec.Command("bspatch", "bee"+strconv.Itoa(i-1)+".jpg", "bee"+strconv.Itoa(i)+".jpg", "patch"+strconv.Itoa(i))
+	//		_ = cmd4.Run()
+	//		os.Remove("bee" + strconv.Itoa(i-1) + ".jpg")
+	//		os.Remove("patch" + strconv.Itoa(i))
+	//	}
+	//}
+	//out := "the file bee" + strconv.Itoa(version) + ".jpg has been restored!"
+	//fmt.Println(out)
 
 }

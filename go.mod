@@ -1,3 +1,3 @@
-module Beijing-Kaoya
+module kaoya
 
 go 1.18

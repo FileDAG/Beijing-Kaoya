@@ -1,6 +1,6 @@
 package main
 
-import "Beijing-Kaoya/cli"
+import "kaoya/cli"
 
 func main() {
 	c := cli.CLI{}
