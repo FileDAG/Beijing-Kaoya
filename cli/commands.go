@@ -17,10 +17,10 @@ type uploadmsg struct {
 }
 
 func (cli *CLI) Run_Swarm() {
-	//fmt.Println("in func run-swarm")
-	cmd := exec.Command("bash", "dev_start.sh")
-	out, _ := cmd.Output()
-	fmt.Println(string(out))
+	err := swarm.Run()
+	if err != nil {
+
+	}
 }
 
 func (cli *CLI) Upload(file, address string) {
