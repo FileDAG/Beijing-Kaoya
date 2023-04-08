@@ -10,7 +10,10 @@ go 1.18
 
 ## Install
 
-Be sure to add `$GOPATH/bin` to your terminal's `PATH` if you have not.
+Be sure to add `$GOPATH/bin` to your terminal's `$PATH` if you have not.
+```shell
+export PATH=$PATH:$GOPATH/bin
+```
 
 Install swarm:
 ```sh
