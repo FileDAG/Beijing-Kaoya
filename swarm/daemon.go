@@ -7,7 +7,7 @@ import (
 )
 
 var script = `
-nohup ./bee dev > bee.log 2>&1 &  # this will directly start a bee node in dev mode(the uploaded file will be saved in dev)
+nohup bee dev > bee.log 2>&1 &  # this will directly start a bee node in dev mode(the uploaded file will be saved in dev)
 
 sleep 5
 
@@ -22,6 +22,6 @@ func Run() error {
 	cmd := exec.Command("bash")
 	cmd.Stdin = strings.NewReader(script)
 	out, err := cmd.Output()
-	fmt.Println(out)
+	fmt.Println(string(out))
 	return err
 }
