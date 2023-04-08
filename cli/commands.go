@@ -12,8 +12,8 @@ import (
 )
 
 type uploadmsg struct {
-	Perv_ref string `json:"perv_reference"`
-	Curr_ref string `json:"curr_reference"`
+	PervRef string `json:"perv_reference"`
+	CurrRef string `json:"curr_reference"`
 }
 
 func (cli *CLI) Run_Swarm() {
@@ -35,7 +35,7 @@ func (cli *CLI) Upload(file, address string) {
 
 	t := []byte(out)
 	t = t[14 : len(t)-4]
-	msg := uploadmsg{Perv_ref: string(t), Curr_ref: string(t)}
+	msg := uploadmsg{PervRef: string(t), CurrRef: string(t)}
 	f, _ := os.Create("msg" + ".json")
 	encoder := json.NewEncoder(f)
 	_ = encoder.Encode(msg)
@@ -51,7 +51,7 @@ func (cli *CLI) Upload(file, address string) {
 
 }
 
-func (cli *CLI) Upload_Patch(patchName, old_index string, address string) {
+func (cli *CLI) Upload_Patch(patchName, oldIndex string, address string) {
 	param1 := "@" + patchName
 	param2 := "\"" + "Swarm-Postage-Batch-Id: " + address + "\"" + " " + "\"" + "http://localhost:1633/bzz?name=" + patchName + "\""
 	//fmt.Println("curl" + " " + "--data-binary" + " " + param1 + " " + "-H" + " " + param2)
@@ -62,7 +62,7 @@ func (cli *CLI) Upload_Patch(patchName, old_index string, address string) {
 
 	t := []byte(out)
 	t = t[14 : len(t)-4]
-	msg := uploadmsg{Perv_ref: old_index, Curr_ref: string(t)}
+	msg := uploadmsg{PervRef: oldIndex, CurrRef: string(t)}
 	f, _ := os.Create("msg" + ".json")
 	encoder := json.NewEncoder(f)
 	_ = encoder.Encode(msg)
@@ -101,17 +101,17 @@ func (cli *CLI) Download(ref string) {
 		var msg uploadmsg
 		_ = json.Unmarshal(data, &msg)
 		os.Remove("msg" + ".json")
-		if msg.Curr_ref == msg.Perv_ref {
+		if msg.CurrRef == msg.PervRef {
 			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.Curr_ref + "/")
-			cmd2 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.Curr_ref+"/")
+			cmd2 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.CurrRef+"/")
 			cmd2.Run()
 			break
 		} else {
 			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.Curr_ref + "/")
-			cmd2 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.Curr_ref+"/")
+			cmd2 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.CurrRef+"/")
 			cmd2.Run()
 			//println("curl" + " " + "-OJ" + " " + "http://localhost:1633/bzz/" + msg.Perv_ref + "/")
-			cmd3 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.Perv_ref+"/")
+			cmd3 := exec.Command("bash", "-c", "curl"+" "+"-OJ"+" "+"http://localhost:1633/bzz/"+msg.PervRef+"/")
 			cmd3.Run()
 			version = version + 1
 		}
