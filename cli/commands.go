@@ -124,15 +124,20 @@ func (cli *CLI) Download(ref, filename string) {
 	}
 
 	n := len(increments)
-	cmd = exec.Command("mv", increments[n-1], filename)
-	cmd.Run()
 
 	for i := n - 2; i >= 0; i-- {
-		cmd = exec.Command("bspatch", filename, filename, increments[i])
-		fmt.Println(increments[i])
+		NewName := strconv.Itoa(rand.Int())
+		cmd = exec.Command("bspatch", increments[i+1], NewName, increments[i])
+		fmt.Println("bspatch", increments[i+1], NewName, increments[i])
 		cmd.Run()
 		os.Remove(increments[i])
+		os.Remove(increments[i+1])
+		increments[i] = NewName
 	}
+
+	cmd = exec.Command("mv", increments[0], filename)
+	cmd.Run()
+	
 
 	//if version > 1 {
 	//	for i := 2; i <= version; i++ {

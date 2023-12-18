@@ -1,16 +1,12 @@
 kaoya run-swarm
 
-kaoya upload --file bee1.jpg --addr 663e823838d5c0d7570f650ae686a907946f1e55c1edb67e7546a34199963e51
+kaoya upload --file bee1.jpg --addr 447b57075cdc052ecb6cc472a812a8016982afbc760ba8aa5e24a6b054be37ef
 
-kaoya gen-patch -old-file bee1.jpg -new-file bee2.jpg -version-number 2
+kaoya write -old 006d03814a0e707246dd7b656936a24fe105355166d5adbf3e28980c52a27fb8 -new bee2.jpg -addr 447b57075cdc052ecb6cc472a812a8016982afbc760ba8aa5e24a6b054be37ef
 
-kaoya upload-patch -old-file-index  -patch-file patch2 -address 663e823838d5c0d7570f650ae686a907946f1e55c1edb67e7546a34199963e51
+kaoya download -reference 006d03814a0e707246dd7b656936a24fe105355166d5adbf3e28980c52a27fb8 -o bee3.jpg   #restore bee1.jpg
 
-kaoya write --old
-
-kaoya download -reference df98ccd9249a3f544368babde7ad464b3a8f5a99c47da5ec21b86899c866e610   #restore bee2.jpg
-
-kaoya download -reference 006d03814a0e707246dd7b656936a24fe105355166d5adbf3e28980c52a27fb8   #restore bee1.jpg
+kaoya download -reference 42e4b46d1e82159d4fa9cd381f33727d93a8fa42fd21687b36eb654198efbc7d -o bee4.jpg   #restore bee2.jpg
 
 reference: df98ccd9249a3f544368babde7ad464b3a8f5a99c47da5ec21b86899c866e610
 

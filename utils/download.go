@@ -13,7 +13,7 @@ func DownloadFromUrl(urlToDownload string) (string, error) {
 	defer resp.Body.Close()
 
 	segments := strings.Split(urlToDownload, "/")
-	filename := segments[len(segments)-2]
+	filename := "/home/jiahao/go/bin/"+segments[len(segments)-2]
 	file, err := os.Create(filename)
 	if err != nil {
 		return "", err
